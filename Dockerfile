@@ -19,17 +19,17 @@ RUN sudo yum install -y \
       libcurl-devel
 
 # MongoDB C++ Driver
-ENV MONGO_DRIVER_VERSION 2.2
-ENV MONGO_DRIVER_PATCH_VERSION 3
-RUN wget http://downloads.mongodb.org/cxx-driver/mongodb-linux-x86_64-$MONGO_DRIVER_VERSION.$MONGO_DRIVER_PATCH_VERSION.tgz && \
-    tar xfvz mongodb-linux-x86_64-$MONGO_DRIVER_VERSION.$MONGO_DRIVER_PATCH_VERSION.tgz && \
-    cd mongo-cxx-driver-v$MONGO_DRIVER_VERSION && \
+# https://github.com/telefonicaid/fiware-orion/commit/70f72baf8a36bc595719ede2e26159cbba8d9722
+# documents the regression to legacy-1.0.2 (previously version 2.2.3).
+ENV MONGO_DRIVER_VERSION 1.0.2
+RUN wget https://github.com/mongodb/mongo-cxx-driver/archive/legacy-$MONGO_DRIVER_VERSION.tar.gz && \
+    tar xfvz legacy-$MONGO_DRIVER_VERSION.tar.gz && \
+    cd mongo-cxx-driver-legacy-$MONGO_DRIVER_VERSION && \
       scons && \
-      sudo scons install && \
-      sudo chmod a+r -R /usr/local/include/mongo && \
+      sudo scons install --prefix=/usr/local && \
       cd .. && \
-    rm mongodb-linux-x86_64-$MONGO_DRIVER_VERSION.$MONGO_DRIVER_PATCH_VERSION.tgz && \
-    rm -R mongo-cxx-driver-v$MONGO_DRIVER_VERSION
+    rm legacy-$MONGO_DRIVER_VERSION.tar.gz && \
+    rm -R mongo-cxx-driver-legacy-$MONGO_DRIVER_VERSION
 
 # cantcoap
 RUN sudo yum install -y \
